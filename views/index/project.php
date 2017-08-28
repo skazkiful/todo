@@ -15,6 +15,9 @@
 .showclass{
 	display: inline-block;
 }
+.showclassproject{
+	display: inline-block;
+}
 </style>
   </head>
 
@@ -173,9 +176,17 @@ function showhide(id){
 		$( "#showhide" + id ).addClass( "showclass" );
 	}
 }
+function showhideproject(id){
+	if ( $("#showhideproject" + id ).hasClass("showclassproject") ) {
+		$( "#showhideproject" + id ).removeClass( "showclassproject" );
+	}else{
+		$( "#showhideproject" + id ).addClass( "showclassproject" );
+	}
+}
 $(document).ready(function(){
 	$(document).click(function(){
 		$( ".showclass" ).removeClass( "showclass" );
+		$( ".showclassproject" ).removeClass( "showclassproject" );
 	});
 });
 function checkform(){
