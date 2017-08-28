@@ -18,7 +18,7 @@
 
 <?require_once(ROOT . '/views/index/head.php');?>
 
-<div class="container" style="margin-top:56px;">
+<div class="container" style="padding-top:56px;">
 <div class="row">
 <?require_once(ROOT . '/views/index/leftmenu.php');?>
 <div class="col-md-9" style="background:white;">
