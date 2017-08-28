@@ -64,3 +64,9 @@
     text-decoration: underline;
 	border: 1px solid white;
   }
+.showclass{
+	display: inline-block;
+}
+.showclassproject{
+	display: inline-block;
+}
