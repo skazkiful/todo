@@ -9,7 +9,7 @@ class Index
 			if ($resulttt = $mysqli->query("
 			SELECT projects.id, projects.name, color, COUNT(tasks.id) as count
 			FROM projects
-			LEFT OUTER JOIN tasks on tasks.project = projects.id
+			LEFT OUTER JOIN tasks on tasks.project = projects.id AND tasks.done = '0'
 			WHERE projects.user = '".$_SESSION['id']."'
 			GROUP BY projects.id")) {
 				while( $project = $resulttt->fetch_assoc() ){
@@ -108,41 +108,18 @@ WHERE projects.user = '1' AND tasks.done = '0' AND tasks.date > ". $from ." AND 
 	public static function hightpriorite($id = 0){
 		$mysqli = Bd::GetConnection();
 		$x = 0;
-		$from = mktime(0,0,0,date('m'),date('d'),date('Y'));
-		if($id == '7days'){
-			$to = $from+604800;
-			$query = "SELECT tasks.id as id, tasks.priorite as priorite, tasks.name as name, projects.name as projectname, projects.color as color FROM tasks
-			INNER JOIN projects ON tasks.project = projects.id
-			WHERE tasks.date > ". $from ." AND tasks.date < ". $to ." AND tasks.done = '0'
-			GROUP BY tasks.id
-			ORDER BY tasks.date ASC, tasks.priorite ASC";
-		}elseif($id == 'today'){
-			$to = $from+86400;
-			$query = "SELECT tasks.id as id, tasks.priorite as priorite, tasks.name as name, projects.name as projectname, projects.color as color FROM tasks
-			INNER JOIN projects ON tasks.project = projects.id
-			WHERE tasks.date > ". $from ." AND tasks.date < ". $to ." AND tasks.done = '0'
-			GROUP BY tasks.id
-			ORDER BY tasks.date ASC, tasks.priorite ASC";
-		}elseif($id == 'arch'){
-			$to = $from+86400;
-			$query = "SELECT tasks.id as id, tasks.priorite as priorite, tasks.name as name, projects.name as projectname, projects.color as color FROM tasks
-			INNER JOIN projects ON tasks.project = projects.id
-			WHERE projects.id = '".$id."' AND tasks.done = '1'
-			GROUP BY tasks.id
-			ORDER BY tasks.date ASC, tasks.priorite ASC";
-		}else{
 			$query = "SELECT tasks.id as id, tasks.priorite as priorite, tasks.name as name, projects.name as projectname, projects.color as color FROM tasks
 			INNER JOIN projects ON tasks.project = projects.id
 			WHERE projects.id = '".$id."' AND tasks.date < ". time() ." AND tasks.done = '0'
 			GROUP BY tasks.id
 			ORDER BY tasks.date ASC, tasks.priorite ASC";
-		}
 			if ($resulttt = $mysqli->query($query)) {
 				while( $project = $resulttt->fetch_assoc() ){
 					$retproject[$x]['id'] = $project['id'];
 					$retproject[$x]['name'] = $project['name'];
 					$retproject[$x]['projectname'] = $project['projectname'];
 					$retproject[$x]['color'] = $project['color'];
+					
 					if($project['priorite'] == '1'){
 						$retproject[$x]['taskcolor'] = 'ff0000';
 					}elseif($project['priorite'] == '2'){
@@ -163,11 +140,24 @@ WHERE projects.user = '1' AND tasks.done = '0' AND tasks.date > ". $from ." AND 
 		$mysqli = Bd::GetConnection();
 		$x = 0;
 		$from = mktime(0,0,0,date('m'),date('d'),date('Y'));
-		if($id == 'arch'){
+		if($id == '7days'){
+			$to = $from+604800;
+			$query = "SELECT tasks.id as id, tasks.priorite as priorite, tasks.name as name, projects.name as projectname, projects.color as color FROM tasks
+			INNER JOIN projects ON tasks.project = projects.id
+			WHERE tasks.date > ". $from ." AND tasks.date < ". $to ." AND tasks.done = '0'
+			GROUP BY tasks.id
+			ORDER BY tasks.date ASC, tasks.priorite ASC";
+		}elseif($id == 'today'){
 			$to = $from+86400;
 			$query = "SELECT tasks.id as id, tasks.priorite as priorite, tasks.name as name, projects.name as projectname, projects.color as color FROM tasks
 			INNER JOIN projects ON tasks.project = projects.id
-			WHERE projects.id = '".$id."' AND tasks.done = '1'
+			WHERE tasks.date > ". $from ." AND tasks.date < ". $to ." AND tasks.done = '0'
+			GROUP BY tasks.id
+			ORDER BY tasks.date ASC, tasks.priorite ASC";
+		}elseif($id == 'arch'){
+			$query = "SELECT tasks.id as id, tasks.priorite as priorite, tasks.name as name, projects.name as projectname, projects.color as color FROM tasks
+			INNER JOIN projects ON tasks.project = projects.id
+			WHERE projects.user = '".$_SESSION['id']."' AND tasks.done = '1'
 			GROUP BY tasks.id
 			ORDER BY tasks.date ASC, tasks.priorite ASC";
 		}else{
@@ -176,7 +166,7 @@ WHERE projects.user = '1' AND tasks.done = '0' AND tasks.date > ". $from ." AND 
 			WHERE projects.id = '".$id."' AND tasks.date > ". time() ." AND tasks.done = '0'
 			GROUP BY tasks.id
 			ORDER BY tasks.date ASC, tasks.priorite ASC";
-		}	
+		}
 			if ($resulttt = $mysqli->query($query)) {
 				while( $project = $resulttt->fetch_assoc() ){
 					$retproject[$x]['id'] = $project['id'];
